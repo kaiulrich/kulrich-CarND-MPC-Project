@@ -63,6 +63,12 @@ epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t-1] / Lf * dt
 
 ### Timestep Length and Elapsed Duration (N & dt)
 
-The values chosen for N and dt originally were 10 and 0.1 respectively to first give stable performance at lower speeds.
+* The values chosen for N and dt originally were 10 and 0.1 respectively to first give stable performance at lower speeds.
+* Once a benchmark performance was reached dt was reduced to 0.05 to allow for greater speeds. 
+* A N value of 12 was chosen so as to keep the horizon T to an OK level, the values selected results in a T of 0.6s. 
+* As the vehicle is travelling at higher speeds a lower T is more acceptable. It was found that when trying to increase N any further resulted in deteriorating performance.
 
-Once a benchmark performance was reached dt was reduced to 0.05 to allow for greater speeds. A N value of 12 was chosen so as to keep the horizon T to an OK level, the values selected results in a T of 0.6s. As the vehicle is travelling at higher speeds a lower T is more acceptable. It was found that when trying to increase N any further resulted in deteriorating performance.
+### Model Predictive Control with Latency
+
+The latency was mainly handled by predicting the next state based on the latency applied to the kinematic model as per the equations below. Note here that px, py and psi are all 0s as we have transformed about the center point of the car.
+
