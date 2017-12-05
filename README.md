@@ -68,7 +68,36 @@ epsi[t+1] = psi[t] - psides[t] + v[t] * delta[t-1] / Lf * dt
 * A N value of 12 was chosen so as to keep the horizon T to an OK level, the values selected results in a T of 0.6s. 
 * As the vehicle is travelling at higher speeds a lower T is more acceptable. It was found that when trying to increase N any further resulted in deteriorating performance.
 
+### Polynomial Fitting and MPC Preprocessing
+
+The waypoints were transformed from the map co-oridinates to the vehicles co-ordinates using the following code:
+
+~~~
+
+	Eigen::MatrixXd pts_veh(2, ptsx.size());
+	for (size_t i = 0; i < ptsx.size(); i++)
+	{
+	  pts_veh(0, i) = (cos(-psi) * (ptsx[i] - px)) - (sin(-psi) * (ptsy[i] - py)); // X component
+	  pts_veh(1, i) = (sin(-psi) * (ptsx[i] - px)) + (cos(-psi) * (ptsy[i] - py)); // Y component
+	}
+
+~~~
+
+
 ### Model Predictive Control with Latency
 
 The latency was mainly handled by predicting the next state based on the latency applied to the kinematic model as per the equations below. Note here that px, py and psi are all 0s as we have transformed about the center point of the car.
+
+~~~
+
+	// Predict state after latency using kinematic model
+	// x, y and psi are all zero after transformation above
+	double pred_px = v * dt;
+	double pred_py = 0.0; 
+	double pred_psi = -v * delta / Lf * dt;
+	double pred_v = v + a * dt;
+	double pred_cte = cte + v * sin(epsi) * dt;
+	double pred_epsi = epsi - v * delta / Lf * dt;
+
+~~~
 
